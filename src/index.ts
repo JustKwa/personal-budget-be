@@ -11,7 +11,8 @@ export default new Elysia({ adapter: CloudflareAdapter })
     const db = createDb(DB);
     return { db };
   })
-  .onError(({ set }) => {
+  .onError(({ code, set }) => {
+    if (code === "VALIDATION") return;
     set.status = 500;
     return { error: "Internal server error" };
   })
