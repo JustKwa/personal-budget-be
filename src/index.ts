@@ -11,5 +11,9 @@ export default new Elysia({ adapter: CloudflareAdapter })
     const db = createDb(DB);
     return { db };
   })
+  .onError(({ set }) => {
+    set.status = 500;
+    return { error: "Internal server error" };
+  })
   .use(transactionsRoute)
   .compile();
