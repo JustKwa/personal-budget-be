@@ -1,0 +1,12 @@
+{
+  "name": "personal-budget-be",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-06-01",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "personal-budget-db",
+      "database_id": ""
+    }
+  ]
+}
