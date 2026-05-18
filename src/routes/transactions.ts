@@ -1,17 +1,16 @@
-import { Elysia, t } from "elysia";
 import { eq } from "drizzle-orm";
+import { Elysia, status, t } from "elysia";
+import { dbPlugin } from "../db/plugin";
 import { transactions } from "../db/schema";
-import type { DB } from "../db";
 
 export const transactionsRoute = new Elysia({ prefix: "/transactions" })
-  .get("/", async ({ db }: { db: DB }) => {
-    const all = await db.select().from(transactions).all();
-    return all;
+  .use(dbPlugin)
+  .get("/", async ({ db }) => {
+    return await db.select().from(transactions).all();
   })
-
   .post(
     "/",
-    async ({ db, body }: { db: DB; body: { amount: number; description: string } }) => {
+    async ({ db, body }) => {
       const id = crypto.randomUUID();
       const createdAt = Date.now();
 
@@ -29,35 +28,20 @@ export const transactionsRoute = new Elysia({ prefix: "/transactions" })
       }),
     }
   )
-
-  .get("/:id", async ({ db, params, set }: { db: DB; params: { id: string }; set: any }) => {
+  .get("/:id", async ({ db, params }) => {
     const tx = await db
       .select()
       .from(transactions)
       .where(eq(transactions.id, params.id))
       .get();
 
-    if (!tx) {
-      set.status = 404;
-      return { error: "Transaction not found" };
-    }
+    if (!tx) return status(404, { error: "Transaction not found" });
 
     return tx;
   })
-
   .put(
     "/:id",
-    async ({
-      db,
-      params,
-      body,
-      set,
-    }: {
-      db: DB;
-      params: { id: string };
-      body: { amount: number; description: string };
-      set: any;
-    }) => {
+    async ({ db, params, body }) => {
       await db
         .update(transactions)
         .set({ amount: body.amount, description: body.description })
@@ -70,10 +54,7 @@ export const transactionsRoute = new Elysia({ prefix: "/transactions" })
         .where(eq(transactions.id, params.id))
         .get();
 
-      if (!tx) {
-        set.status = 404;
-        return { error: "Transaction not found" };
-      }
+      if (!tx) return status(404, { error: "Transaction not found" });
 
       return tx;
     },
@@ -84,8 +65,7 @@ export const transactionsRoute = new Elysia({ prefix: "/transactions" })
       }),
     }
   )
-
-  .delete("/:id", async ({ db, params }: { db: DB; params: { id: string } }) => {
+  .delete("/:id", async ({ db, params }) => {
     await db.delete(transactions).where(eq(transactions.id, params.id)).run();
     return { success: true };
   });

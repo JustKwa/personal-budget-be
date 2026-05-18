@@ -1,20 +1,20 @@
+import { cors } from "@elysia/cors";
 import { Elysia } from "elysia";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
-import { env } from "cloudflare:workers";
-import { createDb } from "./db";
+import { dbPlugin } from "./db/plugin";
 import { transactionsRoute } from "./routes/transactions";
-
-const { DB } = env as unknown as { DB: D1Database };
+import openapi from "@elysia/openapi";
 
 export default new Elysia({ adapter: CloudflareAdapter })
-  .derive(() => {
-    const db = createDb(DB);
-    return { db };
-  })
-  .onError(({ code, set }) => {
+  .use(dbPlugin)
+  .use(cors())
+  .use(openapi())
+  .onError(({ code, error, set }) => {
     if (code === "VALIDATION") return;
+    console.error(`[${code}]`, error);
     set.status = 500;
-    return { error: "Internal server error" };
+    return { error: "Internal server error", detail: (error as Error).message };
   })
+  .get('/', () => "Okay")
   .use(transactionsRoute)
   .compile();

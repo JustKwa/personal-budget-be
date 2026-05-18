@@ -2,11 +2,13 @@
   "name": "personal-budget-be",
   "version": "1.0.50",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --ip 0.0.0.0",
     "deploy": "wrangler deploy",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
+    "@elysia/cors": "^1.4.2",
+    "@elysia/openapi": "^1.4.15",
     "drizzle-orm": "^0.45.2",
     "elysia": "latest"
   },
@@ -14,6 +16,7 @@
     "@cloudflare/workers-types": "^4.20260430.1",
     "bun-types": "latest",
     "drizzle-kit": "^0.31.10",
+    "typescript": "5",
     "wrangler": "^4.86.0"
   },
   "module": "src/index.js"
