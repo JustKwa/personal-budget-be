@@ -1,9 +1,11 @@
 import { eq } from "drizzle-orm";
 import { Elysia, status, t } from "elysia";
+import { authPlugin } from "../auth";
 import { dbPlugin } from "../db/plugin";
 import { transactions } from "../db/schema";
 
 export const transactionsRoute = new Elysia({ prefix: "/transactions" })
+  .use(authPlugin)
   .use(dbPlugin)
   .get("/", async ({ db }) => {
     return await db.select().from(transactions).all();
