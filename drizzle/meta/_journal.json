@@ -8,6 +8,13 @@
       "when": 1777560666120,
       "tag": "0000_dapper_blue_blade",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1779262385403,
+      "tag": "0001_secret_firelord",
+      "breakpoints": true
     }
   ]
 }
