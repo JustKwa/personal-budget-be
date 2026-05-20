@@ -23,6 +23,7 @@ export function createTestApp() {
 
   return new Elysia({ prefix: "/transactions" })
     .derive(() => ({ db }))
+    .get("/categories", () => [...CATEGORIES])
     .get("/", async ({ db }) => {
       return await db.select().from(transactions).all();
     })

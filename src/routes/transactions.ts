@@ -7,6 +7,7 @@ import { transactions, CATEGORIES } from "../db/schema";
 export const transactionsRoute = new Elysia({ prefix: "/transactions" })
   .use(authPlugin)
   .use(dbPlugin)
+  .get("/categories", () => [...CATEGORIES])
   .get("/", async ({ db }) => {
     return await db.select().from(transactions).all();
   })
