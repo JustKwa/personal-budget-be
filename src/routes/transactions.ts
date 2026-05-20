@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { Elysia, status, t } from "elysia";
 import { authPlugin } from "../auth";
 import { dbPlugin } from "../db/plugin";
-import { transactions } from "../db/schema";
+import { transactions, CATEGORIES } from "../db/schema";
 
 export const transactionsRoute = new Elysia({ prefix: "/transactions" })
   .use(authPlugin)
@@ -18,15 +18,16 @@ export const transactionsRoute = new Elysia({ prefix: "/transactions" })
 
       await db
         .insert(transactions)
-        .values({ id, amount: body.amount, description: body.description, createdAt })
+        .values({ id, amount: body.amount, description: body.description, category: body.category, createdAt })
         .run();
 
-      return { id, amount: body.amount, description: body.description, createdAt };
+      return { id, amount: body.amount, description: body.description, category: body.category, createdAt };
     },
     {
       body: t.Object({
         amount: t.Number(),
         description: t.String(),
+        category: t.Union(CATEGORIES.map((c) => t.Literal(c))),
       }),
     }
   )
@@ -46,7 +47,7 @@ export const transactionsRoute = new Elysia({ prefix: "/transactions" })
     async ({ db, params, body }) => {
       await db
         .update(transactions)
-        .set({ amount: body.amount, description: body.description })
+        .set({ amount: body.amount, description: body.description, category: body.category })
         .where(eq(transactions.id, params.id))
         .run();
 
@@ -64,6 +65,7 @@ export const transactionsRoute = new Elysia({ prefix: "/transactions" })
       body: t.Object({
         amount: t.Number(),
         description: t.String(),
+        category: t.Union(CATEGORIES.map((c) => t.Literal(c))),
       }),
     }
   )
