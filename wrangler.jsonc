@@ -1,5 +1,5 @@
 {
-  "name": "personal-budget-be",
+  "name": "personal-budget-server",
   "main": "src/index.ts",
   "compatibility_date": "2025-06-01",
   "assets": { "directory": "./public" },

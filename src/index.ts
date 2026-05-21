@@ -11,7 +11,7 @@ export default new Elysia({ adapter: CloudflareAdapter })
   .use(cors())
   .use(openapi())
   .onError(({ code, error, set }) => {
-    if (code === "VALIDATION") return;
+    if (code === "VALIDATION" || code === "NOT_FOUND") return;
     console.error(`[${code}]`, error);
     set.status = 500;
     return { error: "Internal server error", detail: (error as Error).message };
