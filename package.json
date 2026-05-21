@@ -10,9 +10,9 @@
     "@elysia/cors": "^1.4.2",
     "@elysia/openapi": "^1.4.15",
     "@elysiajs/bearer": "^1.4.4",
-    "@elysiajs/jwt": "^1.4.2",
     "drizzle-orm": "^0.45.2",
-    "elysia": "latest"
+    "elysia": "latest",
+    "jose": "^6.2.3"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260430.1",

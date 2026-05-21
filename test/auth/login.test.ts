@@ -5,7 +5,7 @@ const TEST_PASSWORD = "correct-password";
 const TEST_JWT_SECRET = "test-jwt-secret-really-long-key-that-is-at-least-32-chars";
 
 describe("POST /auth/login", () => {
-  const loginRoute = createLoginRoute(TEST_PASSWORD, TEST_JWT_SECRET);
+  const loginRoute = createLoginRoute(() => TEST_PASSWORD, () => TEST_JWT_SECRET);
 
   it("returns a token on valid password", async () => {
     const res = await loginRoute.handle(

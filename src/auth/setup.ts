@@ -1,17 +1,19 @@
 import { Elysia, t, status } from "elysia";
-import { jwt } from "@elysiajs/jwt";
 import { bearer } from "@elysiajs/bearer";
+import { SignJWT, jwtVerify } from "jose";
 
-export const createLoginRoute = (authPassword: string, jwtSecret: string) =>
+export const createLoginRoute = (getAuthPassword: () => string, getJwtSecret: () => string) =>
   new Elysia({ prefix: "/auth" })
-    .use(jwt({ name: "jwt", secret: jwtSecret, exp: "24h" }))
     .post(
       "/login",
-      async ({ body, jwt }) => {
-        if (body.password !== authPassword) {
+      async ({ body }) => {
+        if (body.password !== getAuthPassword()) {
           return status(401, { error: "Invalid credentials" });
         }
-        const token = await jwt.sign({ sub: "user" });
+        const token = await new SignJWT({ sub: "user" })
+          .setProtectedHeader({ alg: "HS256" })
+          .setExpirationTime("24h")
+          .sign(new TextEncoder().encode(getJwtSecret()));
         return { token };
       },
       {
@@ -21,12 +23,14 @@ export const createLoginRoute = (authPassword: string, jwtSecret: string) =>
       }
     );
 
-export const createAuthPlugin = (jwtSecret: string) =>
+export const createAuthPlugin = (getJwtSecret: () => string) =>
   new Elysia({ name: "auth" })
     .use(bearer())
-    .use(jwt({ name: "jwt", secret: jwtSecret, exp: "24h" }))
-    .onBeforeHandle({ as: "scoped" }, async ({ bearer, jwt, status }) => {
+    .onBeforeHandle({ as: "scoped" }, async ({ bearer, status }) => {
       if (!bearer) return status(401, { error: "Unauthorized" });
-      const payload = await jwt.verify(bearer);
-      if (!payload) return status(401, { error: "Unauthorized" });
+      try {
+        await jwtVerify(bearer, new TextEncoder().encode(getJwtSecret()));
+      } catch {
+        return status(401, { error: "Unauthorized" });
+      }
     });
