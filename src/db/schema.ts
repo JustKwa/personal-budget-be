@@ -1,14 +1,14 @@
 import { sqliteTable, text, real, integer } from "drizzle-orm/sqlite-core";
 
 export const CATEGORIES = [
+  "Groceries",
   "Housing",
   "Food",
+  "Beverages",
   "Transportation",
   "Entertainment",
   "Healthcare",
   "Utilities",
-  "Shopping",
-  "Education",
   "Savings",
   "Other",
 ] as const;
