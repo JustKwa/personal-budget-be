@@ -7,6 +7,7 @@ export const CATEGORIES = [
   "Beverages",
   "Transportation",
   "Entertainment",
+  "Clothing",
   "Healthcare",
   "Utilities",
   "Savings",
